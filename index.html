@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Velvet Heaven - QuickBook</title>
+    <!-- Tailwind CSS CDN for professional, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for social and UI icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLp/m9xL4gD5yJ1S1h+K+6x6eR5yF/C8x/e+sF7w7u4s9+3j1f2p/9hA9j9/3E9e+w9+L9n" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Custom CSS to complement Tailwind and manage dark mode */
+        :root {
+            --primary-color: #fca5a5; /* rose-300 */
+            --secondary-color: #6d28d9; /* violet-700 */
+            --background-light: #f3f4f6; /* gray-100 */
+            --text-light: #1f2937; /* gray-800 */
+            --background-dark: #1f2937; /* gray-800 */
+            --text-dark: #f3f4f6; /* gray-100 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+            background-color: var(--background-light);
+            color: var(--text-light);
+        }
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+        .dark-mode .bg-white {
+            background-color: #111827; /* gray-900 */
+        }
+        .dark-mode .text-gray-800 {
+            color: var(--text-dark);
+        }
+        .dark-mode .border-gray-300 {
+            border-color: #374151; /* gray-700 */
+        }
+        .dark-mode input, .dark-mode select, .dark-mode textarea {
+            background-color: #1f2937;
+            color: #d1d5db; /* gray-300 */
+            border-color: #374151;
+        }
+        /* Custom styles for the scrollbar in dark mode */
+        .dark-mode ::-webkit-scrollbar-thumb {
+            background: #4b5563; /* gray-600 */
+        }
+        /* Fade-in animation for page transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom modal styles for messages */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .dark-mode .modal-content {
+            background-color: #1f2937;
+        }
+        /* New professional styles */
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .dark-mode .card {
+            box-shadow: 0 4px 6px rgba(255, 255, 255, 0.05);
+        }
+        .btn-primary {
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .dark-mode .btn-primary:hover {
+            box-shadow: 0 6px 12px rgba(255, 255, 255, 0.1);
+        }
+        input:focus, select:focus, textarea:focus {
+            ring: 2px;
+            ring-offset: 2px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-800">
+
+    <!-- Header/Navbar -->
+    <header class="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto p-6 flex flex-col md:flex-row items-center justify-between">
+            <!-- Logo -->
+            <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100 mb-2 md:mb-0">
+                The Velvet Heaven
+            </div>
+
+            <!-- Social Links & Contact Info -->
+            <div class="flex items-center space-x-4 mb-2 md:mb-0 text-gray-600 dark:text-gray-400">
+                <a href="https://www.instagram.com/fareihaghulam093/" target="_blank" class="hover:text-pink-500 transition-colors">
+                    <i class="fab fa-instagram text-xl"></i>
+                </a>
+                <a href="https://www.facebook.com/share/1CPWr443yQ/" target="_blank" class="hover:text-blue-600 transition-colors">
+                    <i class="fab fa-facebook text-xl"></i>
+                </a>
+                <span class="text-sm">
+                    03391235050 | fariya.ghul@gmail.com
+                </span>
+            </div>
+
+            <div class="flex items-center space-x-2 md:space-x-4 mt-2 md:mt-0">
+                <!-- Logout Button -->
+                <button id="logout-button" class="hidden flex items-center px-6 py-2 bg-violet-600 text-white font-semibold rounded-full shadow-lg hover:bg-violet-700 transition-all text-sm btn-primary">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    Logout
+                </button>
+                <!-- Dark/Light Mode Toggle Button -->
+                <button id="theme-toggle" class="p-3 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto p-4 md:p-8 my-8 min-h-screen">
+        <!-- This div will be populated dynamically by JavaScript -->
+        <div id="app" class="fade-in"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 shadow-inner mt-8">
+        <div class="container mx-auto p-6 text-center text-gray-600 dark:text-gray-400">
+            <p class="mb-2">03391235050 | fariya.ghul@gmail.com</p>
+            <div class="flex items-center justify-center space-x-4">
+                <a href="https://www.instagram.com/fareihaghulam093/" target="_blank" class="hover:text-pink-500 transition-colors">
+                    <i class="fab fa-instagram text-xl"></i>
+                </a>
+                <a href="https://www.facebook.com/share/1CPWr443yQ/" target="_blank" class="hover:text-blue-600 transition-colors">
+                    <i class="fab fa-facebook text-xl"></i>
+                </a>
+            </div>
+            <p class="mt-4 text-sm">&copy; 2025 The Velvet Heaven. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Custom Modal for Messages -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content text-center dark:text-gray-100 card">
+            <h3 class="text-xl font-bold mb-4">Notification</h3>
+            <p id="modal-message" class="text-lg mb-6"></p>
+            <button id="modal-close-button" class="px-6 py-2 bg-rose-400 hover:bg-rose-500 text-white rounded-md transition-colors font-semibold btn-primary">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Core Application Logic ---
+        
+        // State management for the single-page application
+        const state = {
+            view: 'login', // 'login', 'admin', 'user'
+            user: null,    // { email, role }
+            data: {
+                users: JSON.parse(localStorage.getItem('users')) || [
+                    { email: 'admin@quickbook.com', password: 'password', role: 'admin' },
+                    { email: 'user@quickbook.com', password: 'password', role: 'user' },
+                ],
+                services: JSON.parse(localStorage.getItem('services')) || [
+                    { id: 1, name: 'Haircut', description: 'A classic haircut service.' },
+                    { id: 2, name: 'Facial', description: 'A refreshing facial treatment.' },
+                    { id: 3, name: 'Manicure', description: 'Nail care and polish application.' },
+                ],
+                bookings: JSON.parse(localStorage.getItem('bookings')) || [],
+            }
+        };
+
+        // DOM Elements
+        const app = document.getElementById('app');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const logoutButton = document.getElementById('logout-button');
+        const modal = document.getElementById('message-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseButton = document.getElementById('modal-close-button');
+
+        // --- Utility Functions ---
+
+        // Function to show the custom modal
+        function showModal(message) {
+            modalMessage.textContent = message;
+            modal.style.display = 'block';
+        }
+
+        // Function to hide the custom modal
+        modalCloseButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Function to save data to localStorage
+        function saveData() {
+            localStorage.setItem('users', JSON.stringify(state.data.users));
+            localStorage.setItem('services', JSON.stringify(state.data.services));
+            localStorage.setItem('bookings', JSON.stringify(state.data.bookings));
+            localStorage.setItem('currentUser', JSON.stringify(state.user));
+        }
+
+        // Function to load the user session from localStorage
+        function loadUserSession() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                state.user = JSON.parse(savedUser);
+                state.view = state.user.role;
+            }
+        }
+
+        // --- View Rendering Functions ---
+
+        // Renders the main login and register form
+        function renderLogin() {
+            app.innerHTML = `
+                <div class="max-w-md mx-auto bg-white dark:bg-gray-900 p-8 rounded-2xl card fade-in">
+                    <h2 class="text-4xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">Welcome to QuickBook</h2>
+                    <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
+                        Sign in or register to manage your appointments.
+                    </p>
+                    <form id="login-form" class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="name@example.com" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors">
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                            <input type="password" id="password" name="password" required placeholder="••••••••" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors">
+                        </div>
+                        <div>
+                            <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Role</label>
+                            <select id="role" name="role" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors">
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+                            <button type="submit" class="w-full px-6 py-3 bg-rose-400 text-white font-semibold rounded-md shadow-md hover:bg-rose-500 transition-all btn-primary">
+                                Login
+                            </button>
+                            <button type="button" id="register-button" class="w-full px-6 py-3 bg-violet-600 text-white font-semibold rounded-md shadow-md hover:bg-violet-700 transition-all btn-primary">
+                                Register
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            // Add event listeners for login and register
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('register-button').addEventListener('click', handleRegister);
+        }
+
+        // Renders the user dashboard
+        function renderUserDashboard() {
+            app.innerHTML = `
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl card fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">User Dashboard</h2>
+                    
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <!-- Booking Form -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl card">
+                            <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Book an Appointment</h3>
+                            <form id="booking-form" class="space-y-4">
+                                <div>
+                                    <label for="service-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Service</label>
+                                    <select id="service-select" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"></select>
+                                </div>
+                                <div>
+                                    <label for="date-picker" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
+                                    <input type="date" id="date-picker" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors">
+                                </div>
+                                <div>
+                                    <label for="time-picker" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Time</label>
+                                    <input type="time" id="time-picker" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors">
+                                </div>
+                                <button type="submit" class="w-full px-6 py-3 bg-violet-600 text-white font-semibold rounded-md shadow-md hover:bg-violet-700 transition-all btn-primary">
+                                    Book Now
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Billing & History -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl card flex flex-col space-y-8">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Billing Info</h3>
+                                <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                                    <p class="font-medium">Bank: <span class="font-normal">ABC Bank</span></p>
+                                    <p class="font-medium">Account: <span class="font-normal">**** **** **** 1234</span></p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Appointment History</h3>
+                                <div id="appointment-history" class="space-y-4 text-gray-700 dark:text-gray-300">
+                                    <p class="text-center italic">No appointments booked yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Populate services dropdown
+            const serviceSelect = document.getElementById('service-select');
+            state.data.services.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.id;
+                option.textContent = service.name;
+                serviceSelect.appendChild(option);
+            });
+
+            // Populate appointment history
+            const historyContainer = document.getElementById('appointment-history');
+            const userBookings = state.data.bookings.filter(b => b.userEmail === state.user.email);
+            if (userBookings.length > 0) {
+                historyContainer.innerHTML = ''; // Clear the "no bookings" message
+                userBookings.forEach(booking => {
+                    const bookingDiv = document.createElement('div');
+                    bookingDiv.className = 'p-4 bg-white dark:bg-gray-900 rounded-lg shadow-sm';
+                    const serviceName = state.data.services.find(s => s.id == booking.serviceId)?.name || 'Unknown Service';
+                    bookingDiv.innerHTML = `
+                        <p class="font-semibold">Service: <span class="font-normal">${serviceName}</span></p>
+                        <p class="font-semibold">Date: <span class="font-normal">${booking.date}</span></p>
+                        <p class="font-semibold">Time: <span class="font-normal">${booking.time}</span></p>
+                    `;
+                    historyContainer.appendChild(bookingDiv);
+                });
+            }
+
+            // Add event listeners
+            document.getElementById('booking-form').addEventListener('submit', handleBooking);
+        }
+
+        // Renders the admin dashboard
+        function renderAdminDashboard() {
+            app.innerHTML = `
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl card fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">Admin Panel</h2>
+
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <!-- Services Management -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl card">
+                            <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Services Management</h3>
+                            <form id="service-form" class="space-y-4 mb-6">
+                                <input type="hidden" id="service-id">
+                                <div>
+                                    <label for="service-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Service Name</label>
+                                    <input type="text" id="service-name" required placeholder="Enter service name" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors">
+                                </div>
+                                <div>
+                                    <label for="service-desc" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                                    <textarea id="service-desc" rows="3" placeholder="Enter service description" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"></textarea>
+                                </div>
+                                <button type="submit" id="save-service-button" class="w-full px-6 py-3 bg-violet-600 text-white font-semibold rounded-md shadow-md hover:bg-violet-700 transition-all btn-primary">
+                                    Add Service
+                                </button>
+                            </form>
+                            
+                            <div id="services-list" class="space-y-4">
+                                <!-- Services will be rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Calendar View & Client List -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl card flex flex-col space-y-8">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Today's Appointments</h3>
+                                <div id="calendar-view" class="space-y-4 text-gray-700 dark:text-gray-300">
+                                    <p class="text-center italic">No appointments for today.</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Client List</h3>
+                                <div id="client-list" class="space-y-2 text-gray-700 dark:text-gray-300">
+                                    <!-- Client list will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners
+            document.getElementById('service-form').addEventListener('submit', handleServiceForm);
+            
+            // Render initial data
+            renderServicesList();
+            renderCalendarView();
+            renderClientList();
+        }
+
+        // --- Data Rendering Sub-Functions (Admin) ---
+
+        function renderServicesList() {
+            const listContainer = document.getElementById('services-list');
+            listContainer.innerHTML = '';
+            state.data.services.forEach(service => {
+                const serviceDiv = document.createElement('div');
+                serviceDiv.className = 'p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm flex items-center justify-between card';
+                serviceDiv.innerHTML = `
+                    <div>
+                        <p class="font-bold text-gray-800 dark:text-gray-100">${service.name}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">${service.description}</p>
+                    </div>
+                    <div class="space-x-2 flex-shrink-0">
+                        <button onclick="editService(${service.id})" class="px-3 py-1 text-xs bg-rose-400 text-white rounded-md hover:bg-rose-500 transition-colors btn-primary">Edit</button>
+                        <button onclick="deleteService(${service.id})" class="px-3 py-1 text-xs bg-gray-400 text-white rounded-md hover:bg-gray-500 transition-colors btn-primary">Delete</button>
+                    </div>
+                `;
+                listContainer.appendChild(serviceDiv);
+            });
+        }
+
+        function renderCalendarView() {
+            const calendarContainer = document.getElementById('calendar-view');
+            calendarContainer.innerHTML = '';
+            
+            // Get today's date in YYYY-MM-DD format
+            const today = new Date().toISOString().slice(0, 10);
+            
+            const todayBookings = state.data.bookings.filter(b => b.date === today);
+
+            if (todayBookings.length > 0) {
+                todayBookings.forEach(booking => {
+                    const bookingDiv = document.createElement('div');
+                    bookingDiv.className = 'p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm card';
+                    const serviceName = state.data.services.find(s => s.id == booking.serviceId)?.name || 'Unknown Service';
+                    const user = state.data.users.find(u => u.email === booking.userEmail);
+                    bookingDiv.innerHTML = `
+                        <p class="font-semibold">Client: <span class="font-normal">${user.email}</span></p>
+                        <p class="font-semibold">Service: <span class="font-normal">${serviceName}</span></p>
+                        <p class="font-semibold">Time: <span class="font-normal">${booking.time}</span></p>
+                    `;
+                    calendarContainer.appendChild(bookingDiv);
+                });
+            } else {
+                calendarContainer.innerHTML = '<p class="text-center italic">No appointments for today.</p>';
+            }
+        }
+
+        function renderClientList() {
+            const listContainer = document.getElementById('client-list');
+            listContainer.innerHTML = '';
+            state.data.users.forEach(user => {
+                const clientDiv = document.createElement('div');
+                clientDiv.className = 'p-3 bg-white dark:bg-gray-900 rounded-xl shadow-sm card';
+                clientDiv.textContent = user.email;
+                listContainer.appendChild(clientDiv);
+            });
+        }
+
+        // --- Event Handlers ---
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = event.target.email.value;
+            const password = event.target.password.value;
+            const role = event.target.role.value;
+
+            const user = state.data.users.find(u => u.email === email && u.password === password && u.role === role);
+            
+            if (user) {
+                state.user = user;
+                state.view = user.role;
+                saveData();
+                renderApp();
+            } else {
+                showModal('Invalid login credentials. Please check your email, password, and role.');
+            }
+        }
+
+        function handleRegister(event) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            
+            if (!email || !password) {
+                showModal('Please enter a valid email and password.');
+                return;
+            }
+
+            const existingUser = state.data.users.find(u => u.email === email);
+            if (existingUser) {
+                showModal('An account with this email already exists.');
+                return;
+            }
+
+            const newUser = { email, password, role };
+            state.data.users.push(newUser);
+            saveData();
+            showModal('Registration successful! You can now log in.');
+        }
+
+        function handleServiceForm(event) {
+            event.preventDefault();
+            const idInput = document.getElementById('service-id');
+            const name = document.getElementById('service-name').value;
+            const description = document.getElementById('service-desc').value;
+            const isEditing = idInput.value !== '';
+
+            if (isEditing) {
+                // Update existing service
+                const serviceIndex = state.data.services.findIndex(s => s.id == parseInt(idInput.value));
+                if (serviceIndex !== -1) {
+                    state.data.services[serviceIndex] = { id: parseInt(idInput.value), name, description };
+                }
+                showModal('Service updated successfully!');
+                document.getElementById('save-service-button').textContent = 'Add Service';
+            } else {
+                // Add new service
+                const newId = state.data.services.length > 0 ? Math.max(...state.data.services.map(s => s.id)) + 1 : 1;
+                state.data.services.push({ id: newId, name, description });
+                showModal('Service added successfully!');
+            }
+
+            saveData();
+            renderServicesList();
+            event.target.reset();
+            idInput.value = '';
+        }
+
+        function editService(id) {
+            const service = state.data.services.find(s => s.id === id);
+            if (service) {
+                document.getElementById('service-id').value = service.id;
+                document.getElementById('service-name').value = service.name;
+                document.getElementById('service-desc').value = service.description;
+                document.getElementById('save-service-button').textContent = 'Update Service';
+            }
+        }
+
+        function deleteService(id) {
+            state.data.services = state.data.services.filter(s => s.id !== id);
+            saveData();
+            renderServicesList();
+            showModal('Service deleted successfully!');
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+            const serviceId = document.getElementById('service-select').value;
+            const date = document.getElementById('date-picker').value;
+            const time = document.getElementById('time-picker').value;
+            
+            if (!serviceId || !date || !time) {
+                showModal('Please fill out all fields to book an appointment.');
+                return;
+            }
+
+            const newBooking = {
+                userEmail: state.user.email,
+                serviceId: parseInt(serviceId),
+                date,
+                time
+            };
+
+            state.data.bookings.push(newBooking);
+            saveData();
+            renderUserDashboard(); // Re-render to show new booking
+            showModal('Appointment booked successfully!');
+        }
+
+        function logout() {
+            state.user = null;
+            state.view = 'login';
+            localStorage.removeItem('currentUser');
+            renderApp();
+        }
+
+        // --- Theme Toggle Logic ---
+
+        function toggleTheme() {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            if (isDarkMode) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+        
+        // Check for saved theme preference on page load
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+        logoutButton.addEventListener('click', logout);
+
+
+        // --- Main Application Render Function ---
+        
+        function renderApp() {
+            app.classList.remove('fade-in');
+            void app.offsetWidth; // Trigger reflow to restart animation
+            app.classList.add('fade-in');
+            
+            if (state.user) {
+                logoutButton.classList.remove('hidden');
+            } else {
+                logoutButton.classList.add('hidden');
+            }
+
+            switch (state.view) {
+                case 'admin':
+                    renderAdminDashboard();
+                    break;
+                case 'user':
+                    renderUserDashboard();
+                    break;
+                case 'login':
+                default:
+                    renderLogin();
+                    break;
+            }
+        }
+
+        // Initial application setup
+        loadUserSession();
+        renderApp();
+    </script>
+</body>
+</html>

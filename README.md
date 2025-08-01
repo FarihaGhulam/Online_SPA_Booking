@@ -36,3 +36,20 @@ Advanced booking functionality with time slot availability checks.
 Automated email or SMS notifications for appointments.
 
 More detailed billing and reporting features for admins.
+
+✅ Admin Login Credentials:
+
+Email: admin@quickbook.com
+
+Password: password
+
+Role: admin
+
+
+✅ User Login Credentials:
+
+Email: user@quickbook.com
+
+Password: password
+
+Role: user
